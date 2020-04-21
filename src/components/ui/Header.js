@@ -37,27 +37,21 @@ function ElevationScroll(props) {
 }
 
 const useStyles = makeStyles((theme) => ({
-  toolbarMargin: {
-    ...theme.mixins.toolbar,
-    marginBottom: "3rem",
-    minHeight: "32px",
-    [theme.breakpoints.down("md")]: {
-      marginBottom: "1em",
-      minHeight: "48px",
-    },
-    [theme.breakpoints.down("xs")]: {
-      marginBottom: ".5em",
-      minHeight: "32px",
-    },
-  },
+  // toolbarMargin: {
+  //   ...theme.mixins.toolbar,
+  //   marginBottom: "3rem",
+  //   minHeight: "32px",
+  //   [theme.breakpoints.down("md")]: {
+  //     marginBottom: "1em",
+  //     minHeight: "48px",
+  //   },
+  //   [theme.breakpoints.down("xs")]: {
+  //     marginBottom: ".5em",
+  //     minHeight: "32px",
+  //   },
+  // },
   logo: {
-    height: "5rem",
-    [theme.breakpoints.down("md")]: {
-      height: "4rem",
-    },
-    [theme.breakpoints.down("xs")]: {
-      height: "2.5rem",
-    },
+    height: "100%"
   },
   logoContainer: {
     padding: 0,
@@ -108,10 +102,14 @@ const useStyles = makeStyles((theme) => ({
   drawerItem: {
     ...theme.typography.tab,
     color: "#fff",
+    opacity: 0.7
   },
   drawerItemEstimate: {
     backgroundColor: theme.palette.common.orange,
   },
+  drawerItemSelected: {
+    opacity: 1
+  }
 }));
 
 const Header = (props) => {
@@ -148,67 +146,37 @@ const Header = (props) => {
   };
 
   const menuOptions = [
-    { name: "Services", link: "/services" },
-    { name: "Custom Software Development", link: "/customsoftware" },
-    { name: "Mobile App Development", link: "/mobileApps" },
-    { name: "Website Development", link: "/websites" },
+    { name: "Services", link: "/services", activeIndex: 1, selectedIndex: 0 },
+    { name: "Custom Software Development", link: "/customsoftware", activeIndex: 1, selectedIndex: 1 },
+    { name: "Mobile App Development", link: "/mobileApps", activeIndex: 1, selectedIndex: 2 },
+    { name: "Website Development", link: "/websites", activeIndex: 1, selectedIndex: 3 },
   ];
 
+  const routes = [
+    {name: "Home", link: "/", activeIndex: 0},
+    {name: "Services", link: "/services", activeIndex: 1},
+    {name: "The Reolution", link: "/revolution", activeIndex: 2},
+    {name: "About Us", link: "/about", activeIndex: 3},
+    {name: "Contact", link: "/contact", activeIndex: 4}
+  ]
+
   useEffect(() => {
-    switch (window.location.pathname) {
-      case "/":
-        if (value !== 0) {
-          setValue(0);
-        }
-        break;
-      case "/services":
-        if (value !== 1) {
-          setValue(1);
-          setSelectedIndex(0);
-        }
-        break;
-      case "/customsoftware":
-        if (value !== 1) {
-          setValue(1);
-          setSelectedIndex(1);
-        }
-        break;
-      case "/mobileApps":
-        if (value !== 1) {
-          setValue(1);
-          setSelectedIndex(2);
-        }
-        break;
-      case "/websites":
-        if (value !== 1) {
-          setValue(1);
-          setSelectedIndex(3);
-        }
-        break;
-      case "/revolution":
-        if (value !== 2) {
-          setValue(2);
-        }
-        break;
-      case "/about":
-        if (value !== 3) {
-          setValue(3);
-        }
-        break;
-      case "/contact":
-        if (value !== 4) {
-          setValue(4);
-        }
-        break;
-      case "/estimate":
-        if (value !== 5) {
-          setValue(5);
-        }
-        break;
-      default:
-        break;
-    }
-  }, [value]);
+    [...menuOptions, ...routes].forEach(route => {
+      switch (window.location.pathname) {
+        case `${route.link}`:
+          if (value !== route.activeIndex) {
+            setValue(route.activeIndex)
+            if(route.selectedIndex && route.selectedIndex !== selectedIndex) {
+              setSelectedIndex(route.selectedIndex);
+            }
+          }
+          break;
+        default: 
+          break;  
+      }
+    })
+    
+  }, [value, menuOptions, selectedIndex, routes]);
 
   const tabs = (
     <>
@@ -306,9 +274,7 @@ const Header = (props) => {
             to="/"
             selected={value === 0}
           >
-            <ListItemText disableTypography className={classes.drawerItem}>
-              Home
-            </ListItemText>
+            <ListItemText disableTypography className={value === 0 ? [classes.drawerItem, classes.drawerItemSelected] : classes.drawerItem}>Home</ListItemText>
           </ListItem>
           <ListItem
             onClick={() =>{ setOpenDrawer(false); setValue(1)}}
@@ -318,7 +284,7 @@ const Header = (props) => {
             to="/services"
             selected={value === 1}
           >
-            <ListItemText disableTypography className={classes.drawerItem}>
+            <ListItemText disableTypography className={value === 1 ? [classes.drawerItem, classes.drawerItemSelected] : classes.drawerItem}>
               Services
             </ListItemText>
           </ListItem>
@@ -330,7 +296,7 @@ const Header = (props) => {
             to="/revolution"
             selected={value === 2}
           >
-            <ListItemText disableTypography className={classes.drawerItem}>
+            <ListItemText disableTypography className={value === 2 ? [classes.drawerItem, classes.drawerItemSelected] : classes.drawerItem}>
               The Revolution
             </ListItemText>
           </ListItem>
@@ -342,7 +308,7 @@ const Header = (props) => {
             to="/about"
             selected={value === 3}
           >
-            <ListItemText disableTypography className={classes.drawerItem}>
+            <ListItemText disableTypography className={value === 3 ? [classes.drawerItem, classes.drawerItemSelected] : classes.drawerItem}>
               About Us
             </ListItemText>
           </ListItem>
@@ -354,7 +320,7 @@ const Header = (props) => {
             to="/contact"
             selected={value === 4}
           >
-            <ListItemText disableTypography className={classes.drawerItem}>
+            <ListItemText disableTypography className={value === 4 ? [classes.drawerItem, classes.drawerItemSelected] : classes.drawerItem}>
               Contact Us
             </ListItemText>
           </ListItem>
@@ -367,7 +333,7 @@ const Header = (props) => {
             selected={value === 5}
             className={classes.drawerItemEstimate}
           >
-            <ListItemText disableTypography className={[classes.drawerItem]}>
+            <ListItemText disableTypography className={value === 5 ? [classes.drawerItem, classes.drawerItemSelected] : classes.drawerItem}>
               Estimate
             </ListItemText>
           </ListItem>
@@ -376,6 +342,7 @@ const Header = (props) => {
       <IconButton
         onClick={() => setOpenDrawer(!openDrawer)}
         disableRipple
+        disablePadding 
         className={classes.drawerIconContainer}
       >
         <MenuIcon className={classes.drawerIconStyle}></MenuIcon>
@@ -386,7 +353,7 @@ const Header = (props) => {
   return (
     <>
       <ElevationScroll>
-        <AppBar position="fixed" color="primary">
+        <AppBar position="static" color="primary">
           <Toolbar disableGutters>
             <Button
               component={Link}
